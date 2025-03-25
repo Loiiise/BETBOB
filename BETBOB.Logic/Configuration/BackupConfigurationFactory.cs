@@ -1,19 +1,21 @@
-﻿namespace BETBOB.Logic.Configuration;
+﻿using System.Text.Json;
+
+namespace BETBOB.Logic.Configuration;
 
 public class BackupConfigurationFactory : IBackupConfigurationFactory
 {
-    public BackupConfiguration Default()
+    public readonly string DefaultDestinationPath = Path.Combine("C", "BETBOB");
+    public BackupConfiguration Default() => new BackupConfiguration
     {
-        throw new NotImplementedException();
-    }
+        InputFolders = Array.Empty<string>(),
+        InputFiles = Array.Empty<string>(),
+
+        OutputPath = DefaultDestinationPath,
+    };
 
     public BackupConfiguration FromJson(string json)
-    {
-        throw new NotImplementedException();
-    }
-
+        => JsonSerializer.Deserialize<BackupConfiguration>(json)!;
+    
     public string ToJson(BackupConfiguration configuration)
-    {
-        throw new NotImplementedException();
-    }
+        => JsonSerializer.Serialize(configuration);    
 }

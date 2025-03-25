@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.12.35527.113 d17.12
+VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BETBOB.Logic", "BETBOB.Logic\BETBOB.Logic.csproj", "{15DD0DDF-0D28-4B3C-961F-DCBACA78B403}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BETBOB.CLI", "BETBOB.CLI\BETBOB.CLI.csproj", "{AEDB06C1-EDC2-49A4-AAD3-0455D2086A07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BETBOB.Logic.Tests", "Tests\BETBOB.Logic.Tests\BETBOB.Logic.Tests.csproj", "{40E6D7A9-DAAF-4E8C-A462-9E6E35416183}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{AEDB06C1-EDC2-49A4-AAD3-0455D2086A07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AEDB06C1-EDC2-49A4-AAD3-0455D2086A07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AEDB06C1-EDC2-49A4-AAD3-0455D2086A07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40E6D7A9-DAAF-4E8C-A462-9E6E35416183}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40E6D7A9-DAAF-4E8C-A462-9E6E35416183}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40E6D7A9-DAAF-4E8C-A462-9E6E35416183}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40E6D7A9-DAAF-4E8C-A462-9E6E35416183}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
