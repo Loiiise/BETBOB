@@ -1,6 +1,7 @@
-﻿namespace BETBOB.Logic.Copying;
+﻿namespace BETBOB.Logic.FileHandling;
 
-internal interface IFileCopyer
+public interface IFileCopyer
 {
-    public void CopyFile(string sourcePath, string desinationPath);
+    public void CopyFile(FileInfo sourceFile, string desinationPath, bool overwrite);
+    public void CopyFile(string sourcePath, string desinationPath, bool overwrite);
 }

@@ -2,6 +2,5 @@
 
 public interface IFileWriter
 {
-    void WriteFile(string filePath, string content, bool overwrite);
-    void AppendLineToFile(string filePath, string line, bool createIfNotExists);
+    void WriteToFile(string filePath, string content, bool overwrite);
 }
