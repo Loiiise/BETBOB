@@ -7,11 +7,11 @@ namespace BETBOB.Logic.Tests.Configuration;
 public class BackupConfigurationFactoryTests
 {
     [Fact]
-    public void DefaultShouldGiveEmptyListsAndCDriveDestination()
+    public void EmptyShouldGiveEmptyListsAndCDriveDestination()
     {
         var factory = new BackupConfigurationFactory();
 
-        var configuration = factory.Default();
+        var configuration = factory.Empty();
 
         configuration.ShouldNotBeNull();
         configuration.InputFolders.ShouldBeEmpty();
