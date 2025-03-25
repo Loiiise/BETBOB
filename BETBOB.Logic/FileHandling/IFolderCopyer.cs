@@ -1,4 +1,4 @@
-﻿namespace BETBOB.Logic.Copying;
+﻿namespace BETBOB.Logic.FileHandling;
 
 public interface IFolderCopyer
 {
