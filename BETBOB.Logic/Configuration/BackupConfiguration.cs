@@ -1,6 +1,6 @@
-﻿namespace BETBOB.Logic;
+﻿namespace BETBOB.Logic.Configuration;
 
-public class BackupConfiguration
+public record BackupConfiguration
 {
     public required string[] InputFolders { get; init; }
     public required string[] InputFiles { get; init; }
