@@ -2,5 +2,5 @@
 
 public interface IFolderCopyer
 {
-    public void CopyFolder(string sourcePath, string desinationPath);
+    public void CopyFolder(string sourceFolder, string desinationFolder, bool overwrite);
 }
