@@ -22,13 +22,13 @@ public class BackupCommand : Command
         foreach (var inputFolder in configuration.InputFolders)
         {
             var folderDestinationPath = Path.Join(configuration.OutputPath, inputFolder.DropRootFromPath());
-            _folderCopyer.CopyFolder(inputFolder, folderDestinationPath, true);
+            _folderCopyer.CopyFolder(inputFolder, folderDestinationPath, configuration.OverwriteDuplicates);
         }
 
         foreach (var file in configuration.InputFiles)
         {
             var fileDestinationPath = Path.Join(configuration.OutputPath, file.DropRootFromPath());
-            _fileCopyer.CopyFile(file, fileDestinationPath, true);
+            _fileCopyer.CopyFile(file, fileDestinationPath, configuration.OverwriteDuplicates);
         }
 
         var configPath = Path.Combine(configuration.OutputPath, ProgramStandards.DefaultConfigurationFileName);
