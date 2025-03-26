@@ -4,7 +4,7 @@ namespace BETBOB.Logic.Configuration;
 
 public class BackupConfigurationFactory : IBackupConfigurationFactory
 {
-    public readonly string DefaultDestinationPath = Path.Combine("C", "BETBOB");
+    public readonly string DefaultDestinationPath = Path.Combine("C:", "BETBOB");
 
     public BackupConfiguration Empty() => new BackupConfiguration
     {

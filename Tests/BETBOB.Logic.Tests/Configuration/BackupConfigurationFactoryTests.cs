@@ -16,7 +16,7 @@ public class BackupConfigurationFactoryTests
         configuration.ShouldNotBeNull();
         configuration.InputFolders.ShouldBeEmpty();
         configuration.InputFiles.ShouldBeEmpty();
-        configuration.OutputPath.ShouldContain("C");
+        configuration.OutputPath.ShouldContain($"C:");
         configuration.OutputPath.ShouldContain("BETBOB");
     }
 
