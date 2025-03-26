@@ -1,7 +1,6 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
-using System.Reflection;
-using static System.Environment;
+using BETBOB.Logic.Standards;
 
 namespace BETBOB.Logic.Command;
 
@@ -21,7 +20,7 @@ public class InitializeConfigurationCommand : ICommand
 
         var configuration = _backupConfigurationFactory.Empty() with
         {
-            InputFolders = GetStandardFolders(),
+            InputFolders = SystemsStandards.GetCommonFolders(),
             InputFiles = new string[] { configurationDestinationPath },
         };
 
@@ -33,32 +32,15 @@ public class InitializeConfigurationCommand : ICommand
 
     private string GetDesinationPath()
     {
-        var executableDirectory = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location);
-        var defaultFileName = "BETBOB.config";
+        var executableDirectory = SystemsStandards.GetExecutableLocation();
 
-        return Path.Join(executableDirectory, defaultFileName);
-    }
-
-    private string[] GetStandardFolders()
-        => new SpecialFolder[]
+        if (executableDirectory == null)
         {
-            SpecialFolder.Desktop,
-            SpecialFolder.MyDocuments,
-            SpecialFolder.Personal,
-            SpecialFolder.Favorites,
-            SpecialFolder.MyMusic,
-            SpecialFolder.MyVideos,
-            SpecialFolder.DesktopDirectory,
-            SpecialFolder.MyPictures,
-            SpecialFolder.CommonDocuments,
-            SpecialFolder.CommonMusic,
-            SpecialFolder.CommonPictures,
-            SpecialFolder.CommonVideos,
+            return Path.Join(SystemsStandards.DefaultDriveRoot, BETBOBStandards.DefaultConfigurationFileName);
         }
-        .Select(GetFolderPath)
-        // SpecialFolder may point to the same folder on certain systems
-        .Distinct()
-        .ToArray();
+
+        return Path.Join(executableDirectory, BETBOBStandards.DefaultConfigurationFileName);
+    }
 
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
     private readonly IFileWriter _fileWriter;
