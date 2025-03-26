@@ -34,10 +34,11 @@ internal class MagicCommandFactory
         if (commandArguments.Length < commandConfiguration.MinimumAmountOfArguments || commandArguments.Length > commandConfiguration.MaximumAmountOfArguments)
             throw new ArgumentException($"{commandConfiguration.Tag} expected between {commandConfiguration.MinimumAmountOfArguments} and {commandConfiguration.MaximumAmountOfArguments}, received {commandArguments.Length}");
 
-
         return commandConfiguration.CommandName switch
         {
-            nameof(BackupCommand) => new BackupCommand(commandArguments, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
+            nameof(BackupCommand) => commandArguments.Length > 0 ? 
+                new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter, commandArguments[0]) :
+                new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
             nameof(HelpCommand) => new HelpCommand(),
             nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_backupConfigurationFactory, _fileWriter),
             _ => throw new ArgumentException("Command not found"),

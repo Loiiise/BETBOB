@@ -7,13 +7,14 @@ namespace BETBOB.Logic.Command;
 
 public class BackupCommand : ICommand
 {
-    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter)
+    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter, string? backupConfigurationPath = null)
     {
         _fileReader = fileReader;
         _backupConfigurationFactory = backupConfigurationFactory;
         _fileCopyer = fileCopyer;
         _folderCopyer = folderCopyer;
         _fileWriter = fileWriter;
+        _backupConfigurationPath = backupConfigurationPath;
     }
 
     public void Execute()
@@ -78,4 +79,6 @@ public class BackupCommand : ICommand
     private readonly IFileCopyer _fileCopyer;
     private readonly IFolderCopyer _folderCopyer;
     private readonly IFileWriter _fileWriter;
+
+    private string? _backupConfigurationPath { get; init; }
 }
