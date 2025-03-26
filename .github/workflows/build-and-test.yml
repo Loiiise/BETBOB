@@ -1,0 +1,44 @@
+name: Build and Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: ubuntu-latest
+
+    env:
+      Solution_Name: BETBOB.sln
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    # Install dependencies
+    - name: Install dependencies
+      run: dotnet restore
+
+    # Build the project (treat any warnings as errors)
+    - name: Build the project
+      run: dotnet build /warnaserror
+
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test
