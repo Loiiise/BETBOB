@@ -35,7 +35,9 @@ internal class MagicCommandFactory
 
         var commandConfiguration = commandConfigurations.Single();
         if (commandArguments.Length < commandConfiguration.MinimumAmountOfArguments || commandArguments.Length > commandConfiguration.MaximumAmountOfArguments)
-            throw new ArgumentException($"{commandConfiguration.Tag} expected between {commandConfiguration.MinimumAmountOfArguments} and {commandConfiguration.MaximumAmountOfArguments}, received {commandArguments.Length}");
+            throw new ArgumentException(commandConfiguration.MinimumAmountOfArguments == commandConfiguration.MaximumAmountOfArguments ? 
+                $"{commandConfiguration.Tag} expected {commandConfiguration.MinimumAmountOfArguments} arguments, received {commandArguments.Length}." :
+                $"{commandConfiguration.Tag} expected between {commandConfiguration.MinimumAmountOfArguments} and {commandConfiguration.MaximumAmountOfArguments} arguments, received {commandArguments.Length}.");
 
         return commandConfiguration.CommandName switch
         {
@@ -45,7 +47,7 @@ internal class MagicCommandFactory
             nameof(CleanupCommand) => new CleanupCommand(_logger),
             nameof(HelpCommand) => new HelpCommand(_logger),
             nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_logger, _backupConfigurationFactory, _fileWriter),
-            _ => throw new ArgumentException("Command not found"),
+            _ => throw new ArgumentException($"{commandConfiguration.CommandName} is not a command. Try the help command for more information."),
         };
     }
 

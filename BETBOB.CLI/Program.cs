@@ -10,7 +10,7 @@ internal class Program
     {
         using ILoggerFactory factory = LoggerFactory.Create(builder => builder.AddConsole());
         ILogger logger = factory.CreateLogger("BETBOB");
-        
+
         var fileCopyer = new FileCopyer();
         var commandFactory = new MagicCommandFactory(
             logger,
@@ -20,7 +20,20 @@ internal class Program
             new FileWriter(),
             new FolderCopyer(fileCopyer));
 
-        var command = commandFactory.FromArguments(args);
-        command.Execute();
+        try
+        {
+            var command = commandFactory.FromArguments(args);
+            command.Execute();
+        }
+        catch (ArgumentException argumentException)
+        {
+            logger.LogError("The input you provided could not be parsed: " + argumentException.Message);
+            throw;
+        }
+        catch (Exception exception)
+        {
+            logger.LogError("Something went wrong: " + exception.Message);
+            throw;
+        }
     }
 }
