@@ -16,16 +16,10 @@ public class InitializeConfigurationCommand : NoArgumentsCommand
 
     public override void Execute()
     {
-        var configurationDestinationPath = GetDesinationPath();
-
-        var configuration = _backupConfigurationFactory.Empty() with
-        {
-            InputFolders = SystemsStandards.GetCommonFolders(),
-            InputFiles = new string[] { configurationDestinationPath },
-        };
+        var configuration = _backupConfigurationFactory.Empty() with { InputFolders = SystemsStandards.GetCommonFolders() };
 
         _fileWriter.WriteToFile(
-            configurationDestinationPath,
+            GetDesinationPath(),
             _backupConfigurationFactory.ToJson(configuration),
             true);
     }
