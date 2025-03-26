@@ -11,6 +11,10 @@ public class BackupConfigurationFactory : IBackupConfigurationFactory
         InputFiles = Array.Empty<string>(),
 
         OutputPath = Path.Combine(SystemsStandards.DefaultDriveRoot, ProgramStandards.ProgramName),
+
+        OverwriteDuplicates = true,
+        ZipResult = false,
+        CreateTimestampFolder = true,
     };
 
     public BackupConfiguration FromJson(string json)
