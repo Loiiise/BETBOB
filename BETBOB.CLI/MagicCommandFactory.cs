@@ -4,7 +4,7 @@ using BETBOB.Logic.FileHandling;
 
 namespace BETBOB.CLI;
 
-internal class MagicCommandFactory : ICommandFactory
+internal class MagicCommandFactory
 {
     internal MagicCommandFactory(
         IBackupConfigurationFactory backupConfigurationFactory,
@@ -43,8 +43,6 @@ internal class MagicCommandFactory : ICommandFactory
             _ => throw new ArgumentException("Command not found"),
         };
     }
-
-    public ICommand FromString(string commandString) => FromArguments(commandString.Split(' '));
 
     private CommandConfiguration[] _commandConfigurations = new[]
     {
