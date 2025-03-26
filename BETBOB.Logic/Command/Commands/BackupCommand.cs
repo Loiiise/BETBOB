@@ -3,9 +3,9 @@ using BETBOB.Logic.FileHandling;
 
 namespace BETBOB.Logic.Command;
 
-public class BackupCommand : ICommand
+public class BackupCommand : Command
 {
-    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer)
+    public BackupCommand(string[] arguments, IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer) : base(arguments)
     {
         _fileReader = fileReader;
         _backupConfigurationFactory = backupConfigurationFactory;
@@ -13,7 +13,7 @@ public class BackupCommand : ICommand
         _folderCopyer = folderCopyer;
     }
 
-    public void Execute()
+    public override void Execute()
     {
         throw new NotImplementedException();
     }

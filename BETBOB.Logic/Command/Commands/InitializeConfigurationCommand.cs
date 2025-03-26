@@ -5,7 +5,7 @@ using static System.Environment;
 
 namespace BETBOB.Logic.Command;
 
-public class InitializeConfigurationCommand : ICommand
+public class InitializeConfigurationCommand : NoArgumentsCommand
 {
     public InitializeConfigurationCommand(
         IBackupConfigurationFactory backupConfigurationFactory,
@@ -15,7 +15,7 @@ public class InitializeConfigurationCommand : ICommand
         _fileWriter = fileWriter;
     }
 
-    public void Execute()
+    public override void Execute()
     {
         var configurationDestinationPath = GetDesinationPath();
 
