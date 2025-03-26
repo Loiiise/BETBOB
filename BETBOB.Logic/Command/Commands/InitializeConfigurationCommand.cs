@@ -1,20 +1,22 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
 using BETBOB.Logic.Standards;
+using Microsoft.Extensions.Logging;
 
 namespace BETBOB.Logic.Command;
 
-public class InitializeConfigurationCommand : ICommand
+public class InitializeConfigurationCommand : Command
 {
     public InitializeConfigurationCommand(
+        ILogger logger,
         IBackupConfigurationFactory backupConfigurationFactory,
-        IFileWriter fileWriter)
+        IFileWriter fileWriter) : base(logger)
     {
         _backupConfigurationFactory = backupConfigurationFactory;
         _fileWriter = fileWriter;
     }
 
-    public void Execute()
+    public override void Execute()
     {
         var configuration = _backupConfigurationFactory.Empty() with 
         { 

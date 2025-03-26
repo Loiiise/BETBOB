@@ -1,13 +1,14 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
 using BETBOB.Logic.Standards;
+using Microsoft.Extensions.Logging;
 using System.IO.Compression;
 
 namespace BETBOB.Logic.Command;
 
-public class BackupCommand : ICommand
+public class BackupCommand : Command
 {
-    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter, string? backupConfigurationPath = null)
+    public BackupCommand(ILogger logger, IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter, string? backupConfigurationPath = null) : base(logger)
     {
         _fileReader = fileReader;
         _backupConfigurationFactory = backupConfigurationFactory;
@@ -17,7 +18,7 @@ public class BackupCommand : ICommand
         _backupConfigurationPath = backupConfigurationPath;
     }
 
-    public void Execute()
+    public override void Execute()
     {
         var configuration = GetBackupConfiguration();
         var versionString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-") + ProgramStandards.ProgramName;
