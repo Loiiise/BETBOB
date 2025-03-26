@@ -10,7 +10,7 @@ public class BackupConfigurationFactory : IBackupConfigurationFactory
         InputFolders = Array.Empty<string>(),
         InputFiles = Array.Empty<string>(),
 
-        OutputPath = Path.Combine(SystemsStandards.DefaultDriveRoot, BETBOBStandards.ProgramName),
+        OutputPath = Path.Combine(SystemsStandards.DefaultDriveRoot, ProgramStandards.ProgramName),
     };
 
     public BackupConfiguration FromJson(string json)

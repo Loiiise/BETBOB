@@ -36,10 +36,10 @@ public class InitializeConfigurationCommand : ICommand
 
         if (executableDirectory == null)
         {
-            return Path.Join(SystemsStandards.DefaultDriveRoot, BETBOBStandards.DefaultConfigurationFileName);
+            return Path.Join(SystemsStandards.DefaultDriveRoot, ProgramStandards.DefaultConfigurationFileName);
         }
 
-        return Path.Join(executableDirectory, BETBOBStandards.DefaultConfigurationFileName);
+        return Path.Join(executableDirectory, ProgramStandards.DefaultConfigurationFileName);
     }
 
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
