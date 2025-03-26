@@ -15,6 +15,23 @@ public class BackupCommand : Command
 
     public override void Execute()
     {
+        var configuration = GetBackupConfiguration();
+
+        foreach (var folder in configuration.InputFolders)
+        {
+            var folderDestinationPath = Path.Join(configuration.OutputPath, folder);
+            _folderCopyer.CopyFolder(folder, folderDestinationPath, true);
+        }
+
+        foreach (var file in configuration.InputFiles)
+        {
+            var fileDestinationPath = Path.Join(configuration.OutputPath, file);
+            _folderCopyer.CopyFolder(file, fileDestinationPath, true);
+        }
+    }
+
+    private BackupConfiguration GetBackupConfiguration()
+    {
         throw new NotImplementedException();
     }
 
