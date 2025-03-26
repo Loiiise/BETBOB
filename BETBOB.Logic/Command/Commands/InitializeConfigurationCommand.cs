@@ -16,7 +16,10 @@ public class InitializeConfigurationCommand : ICommand
 
     public void Execute()
     {
-        var configuration = _backupConfigurationFactory.Empty() with { InputFolders = SystemsStandards.GetCommonFolders() };
+        var configuration = _backupConfigurationFactory.Empty() with 
+        { 
+            InputFolders = SystemsStandards.GetCommonFolders().Where(Directory.Exists).ToArray()
+        };
 
         _fileWriter.WriteToFile(
             GetDesinationPath(),
