@@ -37,7 +37,7 @@ internal class MagicCommandFactory : ICommandFactory
 
         return commandConfiguration.CommandName switch
         {
-            nameof(BackupCommand) => new BackupCommand(commandArguments, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer),
+            nameof(BackupCommand) => new BackupCommand(commandArguments, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
             nameof(HelpCommand) => new HelpCommand(),
             nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_backupConfigurationFactory, _fileWriter),
             _ => throw new ArgumentException("Command not found"),

@@ -5,6 +5,12 @@ namespace BETBOB.Logic.Standards;
 
 internal static class SystemsStandards
 {
+    internal static string DropRootFromPath(this string path)
+    {
+        var root = new DirectoryInfo(path).Root.ToString();
+        return path.Substring(root.Length);
+    }
+
     internal const string DefaultDriveRoot = "C:";
     internal static string? GetExecutableLocation() => Assembly.GetEntryAssembly() is Assembly assembly ? Path.GetDirectoryName(assembly.Location) : null;
 
