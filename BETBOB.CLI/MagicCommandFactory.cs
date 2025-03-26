@@ -27,12 +27,17 @@ internal class MagicCommandFactory : ICommandFactory
         var commandConfigurations = _commandConfigurations.Where(c => c.Tag == arguments[0]);
         if (commandConfigurations.Count() != 1) throw new ArgumentException($"Invalid command: {arguments[0]}");
 
+        // First items is the name of the command
+        var commandArguments = arguments.Skip(1).ToArray();
+
         var commandConfiguration = commandConfigurations.Single();
-        if (arguments.Length != 1 + commandConfiguration.ExpectedAmountOfArguments) throw new ArgumentException($"{commandConfiguration.Tag} expected {commandConfiguration.ExpectedAmountOfArguments}, received {arguments.Length - 1}");
+        if (commandArguments.Length < commandConfiguration.MinimumAmountOfArguments || commandArguments.Length > commandConfiguration.MaximumAmountOfArguments)
+            throw new ArgumentException($"{commandConfiguration.Tag} expected between {commandConfiguration.MinimumAmountOfArguments} and {commandConfiguration.MaximumAmountOfArguments}, received {commandArguments.Length}");
+
 
         return commandConfiguration.CommandName switch
         {
-            nameof(BackupCommand) => new BackupCommand(),
+            nameof(BackupCommand) => new BackupCommand(commandArguments, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
             nameof(HelpCommand) => new HelpCommand(),
             nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_backupConfigurationFactory, _fileWriter),
             _ => throw new ArgumentException("Command not found"),
@@ -43,16 +48,17 @@ internal class MagicCommandFactory : ICommandFactory
 
     private CommandConfiguration[] _commandConfigurations = new[]
     {
-        new CommandConfiguration(nameof(BackupCommand), "backup", 0),
-        new CommandConfiguration(nameof(HelpCommand), "help", 0),
-        new CommandConfiguration(nameof(InitializeConfigurationCommand), "init", 0),
+        new CommandConfiguration(nameof(BackupCommand), "backup", 0, 1),
+        new CommandConfiguration(nameof(HelpCommand), "help", 0, 0),
+        new CommandConfiguration(nameof(InitializeConfigurationCommand), "init", 0, 0),
     };
+
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
     private readonly IFileCopyer _fileCopyer;
     private readonly IFileReader _fileReader;
     private readonly IFileWriter _fileWriter;
     private readonly IFolderCopyer _folderCopyer;
 
-    private record CommandConfiguration(string CommandName, string Tag, int ExpectedAmountOfArguments);
+    private record CommandConfiguration(string CommandName, string Tag, int MinimumAmountOfArguments, int MaximumAmountOfArguments);
 }
 

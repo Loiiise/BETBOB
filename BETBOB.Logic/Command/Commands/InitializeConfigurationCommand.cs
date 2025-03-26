@@ -4,7 +4,7 @@ using BETBOB.Logic.Standards;
 
 namespace BETBOB.Logic.Command;
 
-public class InitializeConfigurationCommand : ICommand
+public class InitializeConfigurationCommand : NoArgumentsCommand
 {
     public InitializeConfigurationCommand(
         IBackupConfigurationFactory backupConfigurationFactory,
@@ -14,18 +14,12 @@ public class InitializeConfigurationCommand : ICommand
         _fileWriter = fileWriter;
     }
 
-    public void Execute()
+    public override void Execute()
     {
-        var configurationDestinationPath = GetDesinationPath();
-
-        var configuration = _backupConfigurationFactory.Empty() with
-        {
-            InputFolders = SystemsStandards.GetCommonFolders(),
-            InputFiles = new string[] { configurationDestinationPath },
-        };
+        var configuration = _backupConfigurationFactory.Empty() with { InputFolders = SystemsStandards.GetCommonFolders() };
 
         _fileWriter.WriteToFile(
-            configurationDestinationPath,
+            GetDesinationPath(),
             _backupConfigurationFactory.ToJson(configuration),
             true);
     }

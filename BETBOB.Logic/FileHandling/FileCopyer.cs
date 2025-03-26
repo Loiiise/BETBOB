@@ -3,8 +3,23 @@
 public class FileCopyer : IFileCopyer
 {
     public void CopyFile(string sourcePath, string desinationPath, bool overwrite)
-        => File.Copy(sourcePath, desinationPath, overwrite);
+    {
+        CreateParentFolderIfNotExists(desinationPath);
+        File.Copy(sourcePath, desinationPath, overwrite);
+    }
 
     public void CopyFile(FileInfo sourceFile, string desinationPath, bool overwrite)
-        => sourceFile.CopyTo(desinationPath, overwrite);
+    {
+        CreateParentFolderIfNotExists(desinationPath);
+        sourceFile.CopyTo(desinationPath, overwrite);
+    }
+
+    private void CreateParentFolderIfNotExists(string path)
+    {
+        var parentFolder = Path.GetDirectoryName(path);
+        if (parentFolder != null && !Directory.Exists(parentFolder))
+        {
+            Directory.CreateDirectory(parentFolder);
+        }
+    }
 }
