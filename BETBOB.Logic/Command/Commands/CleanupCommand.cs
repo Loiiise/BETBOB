@@ -9,12 +9,18 @@ public class CleanupCommand : Command
 
     public override void Execute()
     {
-        _logger.LogInformation("Deleting temporary data...");
-
         var tempFolderLocation = ProgramStandards.TemporaryFolderLocation();
-        _logger.LogDebug($"deleting folder: {tempFolderLocation}");
-        Directory.Delete(tempFolderLocation, true);
 
-        _logger.LogInformation("Deleted temporary data");
+        if (Directory.Exists(tempFolderLocation))
+        {
+            _logger.LogInformation("Deleting temporary data...");
+            _logger.LogDebug($"deleting folder: {tempFolderLocation}");
+            Directory.Delete(tempFolderLocation, true);
+            _logger.LogInformation("Deleted temporary data");
+        }
+        else
+        {
+            _logger.LogInformation("No temporary data to delete!");
+        }
     }
 }
