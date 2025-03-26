@@ -2,5 +2,6 @@
 
 internal static class BETBOBStandards
 {
-    internal const string DefaultConfigurationFileName = "BETBOB.config";
+    internal const string ProgramName = "BETBOB";
+    internal const string DefaultConfigurationFileName = $"{ProgramName}.config";
 }
