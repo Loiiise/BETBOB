@@ -56,10 +56,10 @@ public class BackupCommand : ICommand
 
     private BackupConfiguration GetBackupConfiguration()
     {
-        if (Arguments.Length == 1 &&
-            File.Exists(Arguments[0]))
+        if (_backupConfigurationPath != null &&
+            File.Exists(_backupConfigurationPath))
         {
-            var json = _fileReader.ReadFile(Arguments[0]);
+            var json = _fileReader.ReadFile(_backupConfigurationPath);
             return _backupConfigurationFactory.FromJson(json);
         }
 
