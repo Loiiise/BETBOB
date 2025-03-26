@@ -1,6 +1,7 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
 using BETBOB.Logic.Standards;
+using System.IO.Compression;
 
 namespace BETBOB.Logic.Command;
 
@@ -18,21 +19,36 @@ public class BackupCommand : Command
     public override void Execute()
     {
         var configuration = GetBackupConfiguration();
+        var versionString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-") + ProgramStandards.ProgramName;
+
+        var outputPath = configuration.ZipResult ?
+            ProgramStandards.ZipArchiveTemporaryFolderName(versionString) :
+            configuration.OutputPath;
 
         foreach (var inputFolder in configuration.InputFolders)
         {
-            var folderDestinationPath = Path.Join(configuration.OutputPath, inputFolder.DropRootFromPath());
+            var folderDestinationPath = Path.Join(outputPath, inputFolder.DropRootFromPath());
             _folderCopyer.CopyFolder(inputFolder, folderDestinationPath, configuration.OverwriteDuplicates);
         }
 
         foreach (var file in configuration.InputFiles)
         {
-            var fileDestinationPath = Path.Join(configuration.OutputPath, file.DropRootFromPath());
+            var fileDestinationPath = Path.Join(outputPath, file.DropRootFromPath());
             _fileCopyer.CopyFile(file, fileDestinationPath, configuration.OverwriteDuplicates);
         }
 
-        var configPath = Path.Combine(configuration.OutputPath, ProgramStandards.DefaultConfigurationFileName);
-        _fileWriter.WriteToFile(configPath, _backupConfigurationFactory.ToJson(configuration), true);
+        var configOutputPath = Path.Combine(outputPath, ProgramStandards.DefaultConfigurationFileName);
+        _fileWriter.WriteToFile(configOutputPath, _backupConfigurationFactory.ToJson(configuration), true);
+
+        if (configuration.ZipResult)
+        {
+            SystemsStandards.CreateFolderIfNotExists(configuration.OutputPath);
+
+            var zipPath = Path.Combine(configuration.OutputPath, versionString + ".zip");
+            ZipFile.CreateFromDirectory(outputPath, zipPath);
+
+            Directory.Delete(outputPath, true);
+        }
     }
 
     private BackupConfiguration GetBackupConfiguration()

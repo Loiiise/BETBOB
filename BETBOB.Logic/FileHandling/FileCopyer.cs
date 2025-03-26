@@ -1,4 +1,6 @@
-﻿namespace BETBOB.Logic.FileHandling;
+﻿using BETBOB.Logic.Standards;
+
+namespace BETBOB.Logic.FileHandling;
 
 public class FileCopyer : IFileCopyer
 {
@@ -17,9 +19,9 @@ public class FileCopyer : IFileCopyer
     private void CreateParentFolderIfNotExists(string path)
     {
         var parentFolder = Path.GetDirectoryName(path);
-        if (parentFolder != null && !Directory.Exists(parentFolder))
+        if (parentFolder != null)
         {
-            Directory.CreateDirectory(parentFolder);
+            SystemsStandards.CreateFolderIfNotExists(parentFolder);
         }
     }
 }

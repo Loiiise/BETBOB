@@ -14,6 +14,14 @@ internal static class SystemsStandards
     internal const string DefaultDriveRoot = "C:";
     internal static string? GetExecutableLocation() => Assembly.GetEntryAssembly() is Assembly assembly ? Path.GetDirectoryName(assembly.Location) : null;
 
+    internal static void CreateFolderIfNotExists(string path)
+    {
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+    }
+
     internal static string[] GetCommonFolders()
         => new SpecialFolder[]
         {
