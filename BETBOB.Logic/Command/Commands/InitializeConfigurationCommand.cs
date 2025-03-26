@@ -18,8 +18,8 @@ public class InitializeConfigurationCommand : Command
 
     public override void Execute()
     {
-        var configuration = _backupConfigurationFactory.Empty() with 
-        { 
+        var configuration = _backupConfigurationFactory.Empty() with
+        {
             InputFolders = SystemsStandards.GetCommonFolders().Where(Directory.Exists).ToArray()
         };
 
@@ -33,12 +33,12 @@ public class InitializeConfigurationCommand : Command
     {
         var executableDirectory = SystemsStandards.GetExecutableLocation();
 
-        if (executableDirectory == null)
-        {
-            return Path.Join(SystemsStandards.DefaultDriveRoot, ProgramStandards.DefaultConfigurationFileName);
-        }
+        var configurationLocation = executableDirectory == null ?
+            Path.Join(SystemsStandards.DefaultDriveRoot, ProgramStandards.DefaultConfigurationFileName) :
+            Path.Join(executableDirectory, ProgramStandards.DefaultConfigurationFileName);
 
-        return Path.Join(executableDirectory, ProgramStandards.DefaultConfigurationFileName);
+        _logger.LogInformation($"Creating configuration file at {configurationLocation}");
+        return configurationLocation;
     }
 
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
