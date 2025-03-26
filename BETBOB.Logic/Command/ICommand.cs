@@ -2,6 +2,5 @@
 
 public interface ICommand
 {
-    string[] Arguments { get; init; }
     void Execute();
 }
