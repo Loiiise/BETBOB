@@ -39,6 +39,7 @@ internal class MagicCommandFactory
             nameof(BackupCommand) => commandArguments.Length > 0 ? 
                 new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter, commandArguments[0]) :
                 new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
+            nameof(CleanupCommand) => new CleanupCommand(),
             nameof(HelpCommand) => new HelpCommand(),
             nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_backupConfigurationFactory, _fileWriter),
             _ => throw new ArgumentException("Command not found"),
@@ -48,6 +49,7 @@ internal class MagicCommandFactory
     private CommandConfiguration[] _commandConfigurations = new[]
     {
         new CommandConfiguration(nameof(BackupCommand), "backup", 0, 1),
+        new CommandConfiguration(nameof(CleanupCommand), "cleanup", 0, 0),
         new CommandConfiguration(nameof(HelpCommand), "help", 0, 0),
         new CommandConfiguration(nameof(InitializeConfigurationCommand), "init", 0, 0),
     };
