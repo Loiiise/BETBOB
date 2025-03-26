@@ -23,7 +23,9 @@ public class BackupCommand : Command
 
         var outputPath = configuration.ZipResult ?
             ProgramStandards.ZipArchiveTemporaryFolderName(versionString) :
-            configuration.OutputPath;
+            configuration.CreateTimestampFolder ?
+                Path.Join(configuration.OutputPath, versionString) :
+                configuration.OutputPath;
 
         foreach (var inputFolder in configuration.InputFolders)
         {
