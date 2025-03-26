@@ -1,6 +1,7 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
 using System.Reflection;
+using static System.Environment;
 
 namespace BETBOB.Logic.Command;
 
@@ -16,11 +17,17 @@ public class InitializeConfigurationCommand : ICommand
 
     public void Execute()
     {
-        var configuration = _backupConfigurationFactory.Empty() with { InputFolders = GetStandardFolders() };
-        
+        var configurationDestinationPath = GetDesinationPath();
+
+        var configuration = _backupConfigurationFactory.Empty() with
+        {
+            InputFolders = GetStandardFolders(),
+            InputFiles = new string[] { configurationDestinationPath },
+        };
+
         _fileWriter.WriteToFile(
-            GetDesinationPath(), 
-            _backupConfigurationFactory.ToJson(configuration), 
+            configurationDestinationPath,
+            _backupConfigurationFactory.ToJson(configuration),
             true);
     }
 
@@ -33,9 +40,25 @@ public class InitializeConfigurationCommand : ICommand
     }
 
     private string[] GetStandardFolders()
-    {
-        throw new NotImplementedException();
-    }
+        => new SpecialFolder[]
+        {
+            SpecialFolder.Desktop,
+            SpecialFolder.MyDocuments,
+            SpecialFolder.Personal,
+            SpecialFolder.Favorites,
+            SpecialFolder.MyMusic,
+            SpecialFolder.MyVideos,
+            SpecialFolder.DesktopDirectory,
+            SpecialFolder.MyPictures,
+            SpecialFolder.CommonDocuments,
+            SpecialFolder.CommonMusic,
+            SpecialFolder.CommonPictures,
+            SpecialFolder.CommonVideos,
+        }
+        .Select(GetFolderPath)
+        // SpecialFolder may point to the same folder on certain systems
+        .Distinct()
+        .ToArray();
 
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
     private readonly IFileWriter _fileWriter;
