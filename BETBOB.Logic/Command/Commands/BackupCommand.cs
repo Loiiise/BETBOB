@@ -1,13 +1,14 @@
 ﻿using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
 using BETBOB.Logic.Standards;
+using Microsoft.Extensions.Logging;
 using System.IO.Compression;
 
 namespace BETBOB.Logic.Command;
 
-public class BackupCommand : ICommand
+public class BackupCommand : Command
 {
-    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter, string? backupConfigurationPath = null)
+    public BackupCommand(ILogger logger, IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter, string? backupConfigurationPath = null) : base(logger)
     {
         _fileReader = fileReader;
         _backupConfigurationFactory = backupConfigurationFactory;
@@ -17,7 +18,7 @@ public class BackupCommand : ICommand
         _backupConfigurationPath = backupConfigurationPath;
     }
 
-    public void Execute()
+    public override void Execute()
     {
         var configuration = GetBackupConfiguration();
         var versionString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-") + ProgramStandards.ProgramName;
@@ -28,16 +29,20 @@ public class BackupCommand : ICommand
                 Path.Join(configuration.OutputPath, versionString) :
                 configuration.OutputPath;
 
+        _logger.LogInformation(configuration.ZipResult ? "Setting up temporary files..." : $"Copying files to {outputPath}");
+
         foreach (var inputFolder in configuration.InputFolders)
         {
             var folderDestinationPath = Path.Join(outputPath, inputFolder.DropRootFromPath());
+            _logger.LogDebug($"Copying {inputFolder} to {folderDestinationPath}");
             _folderCopyer.CopyFolder(inputFolder, folderDestinationPath, configuration.OverwriteDuplicates);
         }
 
-        foreach (var file in configuration.InputFiles)
+        foreach (var inputFile in configuration.InputFiles)
         {
-            var fileDestinationPath = Path.Join(outputPath, file.DropRootFromPath());
-            _fileCopyer.CopyFile(file, fileDestinationPath, configuration.OverwriteDuplicates);
+            var fileDestinationPath = Path.Join(outputPath, inputFile.DropRootFromPath());
+            _logger.LogDebug($"Copying {inputFile} to {fileDestinationPath}");
+            _fileCopyer.CopyFile(inputFile, fileDestinationPath, configuration.OverwriteDuplicates);
         }
 
         var configOutputPath = Path.Combine(outputPath, ProgramStandards.DefaultConfigurationFileName);
@@ -45,13 +50,17 @@ public class BackupCommand : ICommand
 
         if (configuration.ZipResult)
         {
+            _logger.LogInformation("Zipping your files...");
             SystemsStandards.CreateFolderIfNotExists(configuration.OutputPath);
 
             var zipPath = Path.Combine(configuration.OutputPath, versionString + ".zip");
             ZipFile.CreateFromDirectory(outputPath, zipPath);
 
+            _logger.LogInformation("Deleting temporary files...");
             Directory.Delete(outputPath, true);
         }
+
+        _logger.LogInformation($"Backup completed! See {configuration.OutputPath}");
     }
 
     private BackupConfiguration GetBackupConfiguration()
@@ -59,6 +68,7 @@ public class BackupCommand : ICommand
         if (_backupConfigurationPath != null &&
             File.Exists(_backupConfigurationPath))
         {
+            _logger.LogInformation($"Using configuration as specified at: {_backupConfigurationPath}");
             var json = _fileReader.ReadFile(_backupConfigurationPath);
             return _backupConfigurationFactory.FromJson(json);
         }
@@ -67,10 +77,12 @@ public class BackupCommand : ICommand
 
         if (File.Exists(defaultPath))
         {
+            _logger.LogInformation($"Using configuration at current location: {_backupConfigurationPath}");
             var json = _fileReader.ReadFile(defaultPath);
             return _backupConfigurationFactory.FromJson(json);
         }
 
+        _logger.LogInformation($"Using default configuration.");
         return _backupConfigurationFactory.Empty();
     }
 

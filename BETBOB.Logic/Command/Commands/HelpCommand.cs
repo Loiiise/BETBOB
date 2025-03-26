@@ -1,8 +1,12 @@
-﻿namespace BETBOB.Logic.Command;
+﻿using Microsoft.Extensions.Logging;
 
-public class HelpCommand : ICommand
+namespace BETBOB.Logic.Command;
+
+public class HelpCommand : Command
 {
-    public void Execute()
+    public HelpCommand(ILogger logger) : base(logger) { }
+
+    public override void Execute()
     {
         throw new NotImplementedException();
     }

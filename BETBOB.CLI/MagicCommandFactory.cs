@@ -1,18 +1,21 @@
 ﻿using BETBOB.Logic.Command;
 using BETBOB.Logic.Configuration;
 using BETBOB.Logic.FileHandling;
+using Microsoft.Extensions.Logging;
 
 namespace BETBOB.CLI;
 
 internal class MagicCommandFactory
 {
     internal MagicCommandFactory(
+        ILogger logger,
         IBackupConfigurationFactory backupConfigurationFactory,
         IFileCopyer fileCopyer,
         IFileReader fileReader,
         IFileWriter fileWriter,
         IFolderCopyer folderCopyer)
     {
+        _logger = logger;
         _backupConfigurationFactory = backupConfigurationFactory;
         _fileCopyer = fileCopyer;
         _fileReader = fileReader;
@@ -37,11 +40,11 @@ internal class MagicCommandFactory
         return commandConfiguration.CommandName switch
         {
             nameof(BackupCommand) => commandArguments.Length > 0 ? 
-                new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter, commandArguments[0]) :
-                new BackupCommand(_fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
-            nameof(CleanupCommand) => new CleanupCommand(),
-            nameof(HelpCommand) => new HelpCommand(),
-            nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_backupConfigurationFactory, _fileWriter),
+                new BackupCommand(_logger, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter, commandArguments[0]) :
+                new BackupCommand(_logger, _fileReader, _backupConfigurationFactory, _fileCopyer, _folderCopyer, _fileWriter),
+            nameof(CleanupCommand) => new CleanupCommand(_logger),
+            nameof(HelpCommand) => new HelpCommand(_logger),
+            nameof(InitializeConfigurationCommand) => new InitializeConfigurationCommand(_logger, _backupConfigurationFactory, _fileWriter),
             _ => throw new ArgumentException("Command not found"),
         };
     }
@@ -53,7 +56,7 @@ internal class MagicCommandFactory
         new CommandConfiguration(nameof(HelpCommand), "help", 0, 0),
         new CommandConfiguration(nameof(InitializeConfigurationCommand), "init", 0, 0),
     };
-
+    private readonly ILogger _logger;
     private readonly IBackupConfigurationFactory _backupConfigurationFactory;
     private readonly IFileCopyer _fileCopyer;
     private readonly IFileReader _fileReader;
