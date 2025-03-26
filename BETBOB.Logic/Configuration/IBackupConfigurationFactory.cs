@@ -2,7 +2,7 @@
 
 public interface IBackupConfigurationFactory
 {
-    BackupConfiguration Default();
+    BackupConfiguration Empty();
     BackupConfiguration FromJson(string json);
     string ToJson(BackupConfiguration configuration);
 }

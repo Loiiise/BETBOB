@@ -2,7 +2,7 @@
 
 namespace BETBOB.Logic.Configuration;
 
-public class BackupConfiguration
+public record BackupConfiguration
 {
     [JsonPropertyName("folders")]
     public required string[] InputFolders { get; init; }

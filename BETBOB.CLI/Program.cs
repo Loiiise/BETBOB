@@ -1,4 +1,5 @@
-﻿using BETBOB.Logic.Command;
+﻿using BETBOB.Logic.Configuration;
+using BETBOB.Logic.FileHandling;
 
 namespace BETBOB.CLI;
 
@@ -6,11 +7,14 @@ internal class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
-    }
+        var fileCopyer = new FileCopyer();
+        var commandFactory = new MagicCommandFactory(
+            new BackupConfigurationFactory(),
+            fileCopyer,
+            new FileReader(),
+            new FileWriter(),
+            new FolderCopyer(fileCopyer));
 
-    static void DummyFlow(string[] args, ICommandFactory commandFactory)
-    {
         var command = commandFactory.FromArguments(args);
         command.Execute();
     }
