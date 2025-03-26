@@ -1,8 +1,8 @@
 ﻿namespace BETBOB.Logic.Command;
 
-public class HelpCommand : NoArgumentsCommand
+public class HelpCommand : ICommand
 {
-    public override void Execute()
+    public void Execute()
     {
         throw new NotImplementedException();
     }

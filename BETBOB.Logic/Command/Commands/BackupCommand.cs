@@ -5,9 +5,9 @@ using System.IO.Compression;
 
 namespace BETBOB.Logic.Command;
 
-public class BackupCommand : Command
+public class BackupCommand : ICommand
 {
-    public BackupCommand(string[] arguments, IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter) : base(arguments)
+    public BackupCommand(IFileReader fileReader, IBackupConfigurationFactory backupConfigurationFactory, IFileCopyer fileCopyer, IFolderCopyer folderCopyer, IFileWriter fileWriter)
     {
         _fileReader = fileReader;
         _backupConfigurationFactory = backupConfigurationFactory;
@@ -16,7 +16,7 @@ public class BackupCommand : Command
         _fileWriter = fileWriter;
     }
 
-    public override void Execute()
+    public void Execute()
     {
         var configuration = GetBackupConfiguration();
         var versionString = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss-") + ProgramStandards.ProgramName;
