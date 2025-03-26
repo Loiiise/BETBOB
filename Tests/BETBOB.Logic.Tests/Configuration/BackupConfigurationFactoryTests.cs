@@ -23,15 +23,21 @@ public class BackupConfigurationFactoryTests
     [Theory]
     [InlineData("""
         {
-            "folders": ["folderString"],
+            "create_timestamp_folder": true,
             "files": ["fileString"],
-            "output_path": ""
+            "zip_files": false,
+            "output_path": "",
+            "overwrite_duplicate_files": true,    
+            "folders": ["folderString"]
         }
         """)]
     [InlineData("""
         {
             "folders": ["folderString"],
+            "create_timestamp_folder": true,
             "output_path": "",
+            "overwrite_duplicate_files": true,    
+            "zip_files": false,
             "files": ["fileString"]
         }
         """)]
@@ -39,7 +45,10 @@ public class BackupConfigurationFactoryTests
         {
             "output_path": "",
             "folders": ["folderString"],
-            "files": ["fileString"]
+            "zip_files": false,
+            "files": ["fileString"],
+            "overwrite_duplicate_files": true,    
+            "create_timestamp_folder": true
         }
         """)]
     public void FieldCanBeParsedInAnyOrder(string json)
@@ -79,7 +88,10 @@ public class BackupConfigurationFactoryTests
             "folders": ["folderString"],
             "files": ["fileString"],
             "output_path": "",
-            "another_field": []
+            "another_field": [],
+            "overwrite_duplicate_files": true,    
+            "zip_files": false,
+            "create_timestamp_folder": true
         }
         """)]
     [InlineData("""
@@ -90,7 +102,10 @@ public class BackupConfigurationFactoryTests
                 "someone_else": "balbal"
             },
             "files": ["fileString"],
-            "output_path": ""
+            "output_path": "",
+            "overwrite_duplicate_files": true,    
+            "zip_files": false,
+            "create_timestamp_folder": true
         }
         """)]
     public void OtherFieldsAreIgnored(string json)
@@ -104,7 +119,10 @@ public class BackupConfigurationFactoryTests
         {
             "folders": [],
             "files": [],
-            "output_path": ""
+            "output_path": "",
+            "overwrite_duplicate_files": true,    
+            "zip_files": false,
+            "create_timestamp_folder": true        
         }
         """)]
     public void EmptyJsonCanBeParsed(string json)
@@ -118,84 +136,87 @@ public class BackupConfigurationFactoryTests
         configuration.OutputPath.ShouldBe("");
     }
 
-    [Fact]
-    public void JsonFieldsCanBeParsed()
+    [Theory, CombinatorialData]
+    public void JsonFieldsCanBeParsed(
+        [CombinatorialMemberData(nameof(GenerateBasicStringArrays))] string[] inputFolders,
+        [CombinatorialMemberData(nameof(GenerateBasicStringArrays))] string[] inputFiles,
+        [CombinatorialMemberData(nameof(GenerateBasicStrings))] string outputPath,
+        [CombinatorialValues(true, false)] bool overwriteDuplicates,
+        [CombinatorialValues(true, false)] bool zipResult,
+        [CombinatorialValues(true, false)] bool createTimestampFolder)
     {
         var factory = new BackupConfigurationFactory();
 
-        foreach (var inputFolders in new string[][]
-            {
-                new string[] { "very_important_data", "something else" },
-                new string[] { "smth" },
-            })
-            foreach (var inputFiles in new string[][]
-                {
-                    new string[] { "balblabalblla" },
-                    new string[] { "safe this file!", "this is important too", "don't forget me pls!" },
-                })
-                foreach (var outputPath in new string[]
-                {
-                    "ThisIsAnOutputPath",
-                    "C/supersecret",
-                    "SaveMeLocation",
-                })
-                {
-                    var inputFoldersString = string.Join(',', inputFolders.Select(f => "\"" + f + "\""));
-                    var inputFilesString = string.Join(',', inputFiles.Select(f => "\"" + f + "\""));
 
-                    var stringifiedConfiguration = $$"""
+        var inputFoldersString = string.Join(',', inputFolders.Select(f => "\"" + f + "\""));
+        var inputFilesString = string.Join(',', inputFiles.Select(f => "\"" + f + "\""));
+
+        var stringifiedConfiguration = $$"""
                         {
                             "folders": [{{inputFoldersString}}],
                             "files": [{{inputFilesString}}],
-                            "output_path": "{{outputPath}}"
+                            "output_path": "{{outputPath}}",
+                            "overwrite_duplicate_files": {{overwriteDuplicates.ToString().ToLower()}},    
+                            "zip_files": {{zipResult.ToString().ToLower()}},
+                            "create_timestamp_folder": {{createTimestampFolder.ToString().ToLower()}}                        
                         }
                         """;
 
-                    var result = factory.FromJson(stringifiedConfiguration);
+        var result = factory.FromJson(stringifiedConfiguration);
 
-                    result.ShouldNotBeNull();
-                    result.InputFolders.ShouldBe(inputFolders);
-                    result.InputFiles.ShouldBe(inputFiles);
-                    result.OutputPath.ShouldBe(outputPath);
-                }
+        result.ShouldNotBeNull();
+        result.InputFolders.ShouldBe(inputFolders);
+        result.InputFiles.ShouldBe(inputFiles);
+        result.OutputPath.ShouldBe(outputPath);
+
     }
 
     /// <summary>
     /// Assumes <see cref="BackupConfigurationFactory.FromJson"/> works
     /// </summary>
-    [Fact]
-    public void ConfigurationsCanBeStringified()
+    [Theory, CombinatorialData]
+    public void ConfigurationsCanBeStringified(
+        [CombinatorialMemberData(nameof(GenerateBasicStringArrays))] string[] inputFolders,
+        [CombinatorialMemberData(nameof(GenerateBasicStringArrays))] string[] inputFiles,
+        [CombinatorialMemberData(nameof(GenerateBasicStrings))] string outputPath,
+        [CombinatorialValues(true, false)] bool overwriteDuplicates,
+        [CombinatorialValues(true, false)] bool zipResult,
+        [CombinatorialValues(true, false)] bool createTimestampFolder)
     {
         var factory = new BackupConfigurationFactory();
 
-        foreach (var configuration in new BackupConfiguration[]
-            {
-                new BackupConfiguration()
-                {
-                    InputFolders = Array.Empty<string>(),
-                    InputFiles = Array.Empty<string>(),
-                    OutputPath = string.Empty,
-                },
-                new BackupConfiguration()
-                {
-                    InputFolders = new string[] { "special folder", "dont look here" },
-                    InputFiles = new string[] { "myfile.secret" },
-                    OutputPath = "balbalpath",
-                },
-                new BackupConfiguration()
-                {
-                    InputFolders = new string[] { "directory", "dir", "folder", "fldr" },
-                    InputFiles = new string[] { "supercoolfile.extension" },
-                    OutputPath = "findingmyway",
-                },
-            })
+        var configuration = new BackupConfiguration()
         {
-            var result = factory.FromJson(factory.ToJson(configuration));
+            InputFolders = inputFolders,
+            InputFiles = inputFiles,
+            OutputPath = outputPath,
 
-            result.ShouldNotBeNull();
-            result.InputFolders.ShouldBe(configuration.InputFolders);
-            result.InputFiles.ShouldBe(configuration.InputFiles);
-            result.OutputPath.ShouldBe(configuration.OutputPath);
-        }
+            OverwriteDuplicates = overwriteDuplicates,
+            ZipResult = zipResult,
+            CreateTimestampFolder = createTimestampFolder,
+        };
+
+        var result = factory.FromJson(factory.ToJson(configuration));
+
+        result.ShouldNotBeNull();
+        result.InputFolders.ShouldBe(configuration.InputFolders);
+        result.InputFiles.ShouldBe(configuration.InputFiles);
+        result.OutputPath.ShouldBe(configuration.OutputPath);
+        result.OverwriteDuplicates.ShouldBe(configuration.OverwriteDuplicates);
+        result.ZipResult.ShouldBe(configuration.ZipResult);
+        result.CreateTimestampFolder.ShouldBe(configuration.CreateTimestampFolder);
     }
+
+    private static IEnumerable<object[]> GenerateBasicStrings() => GetBasicStringArrays().SelectMany(x => x).Select(x => new object[] { x });
+    private static IEnumerable<object[]> GenerateBasicStringArrays() => GetBasicStringArrays().Select(x => new object[] { x });
+
+    private static string[][] GetBasicStringArrays() => new string[][]
+    {
+        Array.Empty<string>(),
+        new string[] { "very_important_data", "something else" },
+        new string[] { "smth" },
+        new string[] { "balblabalblla" },
+        new string[] { "safe this file!", "this is important too", "don't forget me pls!" },
+        new string[] { "ThisIsAnOutputPath", "C/supersecret", "SaveMeLocation" },
+    };
 }

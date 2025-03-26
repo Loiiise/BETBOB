@@ -11,4 +11,11 @@ public record BackupConfiguration
 
     [JsonPropertyName("output_path")]
     public required string OutputPath { get; init; }
+
+    [JsonPropertyName("overwrite_duplicate_files")]
+    public required bool OverwriteDuplicates { get; init; }
+    [JsonPropertyName("zip_files")]
+    public required bool ZipResult { get; init; }
+    [JsonPropertyName("create_timestamp_folder")]
+    public required bool CreateTimestampFolder { get; init; }
 }
